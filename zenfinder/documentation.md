@@ -22,7 +22,7 @@ of contents if you hit the backspace key on your keyboard.
 {:toc}
 
 ## Geometry
-Geometry is one of the important concepts in Pathfinder, given the entire
+Geometry is one of the important concepts in Zenfinder, given the entire
 library is literally based around geometry.
 
 ### Angles
@@ -41,7 +41,7 @@ There's two types of points - `PointXY` and `PointXYZ`. `PointXYZ` is an
 extension of `PointXY`.
 
 #### PointXY
-The simplest kind of point - also the basis for all of Pathfinder's geometry
+The simplest kind of point - also the basis for all of Zenfinder's geometry
 system. `PointXY` has two main values:
 - X
 - Y
@@ -111,7 +111,7 @@ PointXY newPoint = base.inDirection(distance, direction);
 ```
 
 ### Translation
-Translations are at the heart of Pathfinder's movement. The general idea is
+Translations are at the heart of Zenfinder's movement. The general idea is
 that any chassis should be able to receive a translation and move accordingly.
 Translations received by the robot will always be relative - a translation that
 means "go forwards" will make the robot "go forwards," relative to the robot
@@ -163,41 +163,41 @@ public static Translation absoluteToRelative(Translation translation,
 Calibration is a topic so important it deserves its very own page! Check
 it out [right here](calibration.md).
 
-## Operating Pathfinder
-Pathfinder's operation is designed to be as simple as possible, while still
+## Operating Zenfinder
+Zenfinder's operation is designed to be as simple as possible, while still
 allowing advanced users to have the highest degree of control over their
 robot's movement. There are some key concepts you'll need to get the hang of
 in order to operate the library, but after you do, it should be easy going.
 
-### Ticking Pathfinder
+### Ticking Zenfinder
 This is absolutely crucial to operating the library - you need to "tick" it.
 Ticking is the process of updating the robot's translation based on its
 current position and target position (more specifically, the trajectory the
-robot is currently following). The `Pathfinder` class provides a `tick()`
+robot is currently following). The `Zenfinder` class provides a `tick()`
 method that does exactly this. If you're using the library in a loop, you
 should run this `tick()` method once per loop cycle.
 
-#### Ticking Pathfinder in a loop
+#### Ticking Zenfinder in a loop
 Say you're using the library during tele-op or something similar. You want to
 call the `tick()` method once per loop update, as follows.
 ```java
 while (opModeIsActive()) {
-    pathfinder.tick();
+    Zenfinder.tick();
 }
 ```
 
-#### Ticking Pathfinder outside a loop
+#### Ticking Zenfinder outside a loop
 Say you're using the library during autonomous. You could simply do
 something like:
 ```java
-while (pathfinder.isActive()) {
-    pathfinder.tick();
+while (Zenfinder.isActive()) {
+    Zenfinder.tick();
 }
 ```
 
 You could also do something like this:
 ```java
-pathfinder.tickUntil();
+Zenfinder.tickUntil();
 ```
 
 This makes it so that you don't have to implement your own loop, which
@@ -209,7 +209,7 @@ once the tickUntil method has finished.
 #### An example of method chaining
 Method chaining is beautiful - who doesn't love method chaining? Method
 chaining is mostly personal preference - there's no real advantage or
-disadvantage to using it or not using it. Most of Pathfinder's API-like
+disadvantage to using it or not using it. Most of Zenfinder's API-like
 classes have chainable methods by default.
 ```java
 public class ExampleMethodChaining() {
@@ -228,24 +228,24 @@ public class ExampleMethodChaining() {
 
   @SuppressWarnings("CodeBlock2Expr")
   public void example() {
-    pathfinder.goTo(TARGET_A)
-            .tickUntil() // will tick Pathfinder until the path finishes
+    Zenfinder.goTo(TARGET_A)
+            .tickUntil() // will tick Zenfinder until the path finishes
             // executing, regardless of how long it takes
             .goTo(TARGET_B)
-            .tickUntil(4_000) // will tick Pathfinder until either (a) the
+            .tickUntil(4_000) // will tick Zenfinder until either (a) the
             // path finishes, or (b) the elapsed time is
             // greater than or equal to 4 seconds
             .goTo(TARGET_C)
-            .andThen((pathfinder -> doSomething()))
+            .andThen((Zenfinder -> doSomething()))
             .goTo(TARGET_D)
-            .tickUntil(4_000, this::shouldRun, (pathfinder, elapsedMs) -> {
+            .tickUntil(4_000, this::shouldRun, (Zenfinder, elapsedMs) -> {
               // this has a timeout of 4 seconds
               // if the shouldRun supplier returns false, this method
               // will finish executing immediately
               // this consumer will be called once per tick and will be
-              // provided the current instance of Pathfinder, as well
+              // provided the current instance of Zenfinder, as well
               // as the elapsed time (in milliseconds)
-              PointXYZ currentPosition = pathfinder.getPosition();
+              PointXYZ currentPosition = Zenfinder.getPosition();
 
               // print the current position and the elapsed time
               System.out.printf(
@@ -259,8 +259,8 @@ public class ExampleMethodChaining() {
 }
 ```
 
-### Manually controlling Pathfinder's movement
-The `Pathfinder` class has several methods for manually controlling the motion
+### Manually controlling Zenfinder's movement
+The `Zenfinder` class has several methods for manually controlling the motion
 of the robot. 
 
 #### Setting the robot's translation
@@ -268,9 +268,9 @@ of the robot.
 ```java
 public class ExampleSetTranslation {
     public void example() {
-        Pathfinder pathfinder = new Pathfinder(...);
+        Zenfinder Zenfinder = new Zenfinder(...);
         Translation translation = new Translation(0.5, 0.5, 0);
-        pathfinder.setTranslation(translation);
+        Zenfinder.setTranslation(translation);
     }
 }
 ```
@@ -291,7 +291,7 @@ robot to respond to driver input. This can be accomplished with the previously
 mentioned `setTranslation(Translation)` method.
 ```java
 public void runTeleOp() {
-    Pathfinder pathfinder = new Pathfinder(...);
+    Zenfinder Zenfinder = new Zenfinder(...);
     
     while (true) {
         double x = gamepad1.left_stick_x;
@@ -300,7 +300,7 @@ public void runTeleOp() {
         
         Translation translation = new Translation(x, y, z);
         
-        pathfinder.setTranslation(translation);
+        Zenfinder.setTranslation(translation);
     }
 }
 ```
@@ -313,24 +313,24 @@ shouldn't be using `tick`, and vice versa.
 ### Stopping and pausing
 I'm sure at some point, you'll need to stop your robot. I'm going to quickly
 define some terms, just so there's no confusion later on.
-- Pathfinder's MOVEMENT is your robot's physical movement. If Pathfinder is
+- Zenfinder's MOVEMENT is your robot's physical movement. If Zenfinder is
   still moving... well, your robot is still moving.
-- Pathfinder's EXECUTION is managed with the `tick()` method. Execution
+- Zenfinder's EXECUTION is managed with the `tick()` method. Execution
   controls the robot, but it does not directly impact movement - there's only
   a (very strong) correlation.
 
-#### Stopping Pathfinder's execution
-Pathfinder's execution and movement are NOT linked, so it's possible to cancel
-ONLY Pathfinder's execution or ONLY Pathfinder's movement. If your robot is
+#### Stopping Zenfinder's execution
+Zenfinder's execution and movement are NOT linked, so it's possible to cancel
+ONLY Zenfinder's execution or ONLY Zenfinder's movement. If your robot is
 moving when you use the `clear()` method, it'll continue moving after the
 robot's translation has been manually set.
 
-`Pathfinder` provides a method, `clear()`, that can be used to stop the
+`Zenfinder` provides a method, `clear()`, that can be used to stop the
 execution of the library. This will clear the queue of `Follower` instances,
 which will transitively clear any queued `Trajectory` instances.
 ```java
-Pathfinder pathfinder = new Pathfinder(...);
-pathfinder.clear();
+Zenfinder Zenfinder = new Zenfinder(...);
+Zenfinder.clear();
 ```
 
 Note that stopping execution will NOT stop the movement of the robot.
@@ -340,11 +340,11 @@ Physically stopping the robot is an incredibly common task that I'm sure you
 will, at some point, need to do. To physically stop the robot, set the
 translation to a translation with X, Y, and Z values of 0.
 ```java
-Pathfinder pathfinder = new Pathfinder(...);
-pathfinder.setTranslation(new Translation(0, 0, 0));
+Zenfinder Zenfinder = new Zenfinder(...);
+Zenfinder.setTranslation(new Translation(0, 0, 0));
 ```
 
-If you stop the robot's movement WITHOUT also stopping Pathfinder's execution,
+If you stop the robot's movement WITHOUT also stopping Zenfinder's execution,
 your robot will begin moving again as soon as the `tick()` method is called.
 In order to completely stop the robot, you need to clear BOTH the executors
 and the translation.
@@ -352,28 +352,28 @@ and the translation.
 ##### Stopping execution and movement
 Surprisingly enough, it's exactly what you'd expect.
 ```java
-Pathfinder pathfinder = new Pathfinder(...);
+Zenfinder Zenfinder = new Zenfinder(...);
 
 // stop the execution
-pathfinder.clear();
+Zenfinder.clear();
 
 // stop the movement
-pathfinder.setTranslation(new Translation(0, 0, 0));
+Zenfinder.setTranslation(new Translation(0, 0, 0));
 ```
 
 #### Pausing
-There's no officially supported way to pause Pathfinder temporarily. For now,
+There's no officially supported way to pause Zenfinder temporarily. For now,
 you can just stop calling the `tick()` method for as long as you'd like to
-pause Pathfinder. This will work perfectly fine for anything that does not
+pause Zenfinder. This will work perfectly fine for anything that does not
 have elapsed time as a parameter.
 ```java
 public void run() {
-    Pathfinder pathfinder = new Pathfinder(...);
+    Zenfinder Zenfinder = new Zenfinder(...);
     boolean isPaused = false;
     while (true) {
         if (isPaused) continue;
         
-        pathfinder.tick();
+        Zenfinder.tick();
         
         // other code...
     }
@@ -386,7 +386,7 @@ A `Robot` is composed of two elements - a `Drive` and an `Odometry`.
 #### Robot: drive
 The `Drive` interface is responsible for physically driving a robot around
 on a field. You need to have an implementation of the drive class to actually
-operate Pathfinder. There are a couple of prebuilt drive implementations you
+operate Zenfinder. There are a couple of prebuilt drive implementations you
 can use, if you so desire:
 - `me.wobblyyyy.Zenfinder.drive.MeccanumDrive`
 - `me.wobblyyyy.Zenfinder.drive.SwerveDrive`
@@ -479,9 +479,9 @@ There's not really all that much you can do with it.
 
 ###### Why should offsets be managed with odometry?
 If offsets are managed exclusively by odometry, it's significantly less likely
-you'll encounter a hard-to-find bug. Because Pathfinder is designed to be a
+you'll encounter a hard-to-find bug. Because Zenfinder is designed to be a
 suite of movement-related tools, you can handle all of your odometry offsetting
-needs with built-in Pathfinder utilities.
+needs with built-in Zenfinder utilities.
 
 ###### Modify the robot's position
 Refer to the following methods to modify the robot's position. It's suggested
@@ -502,7 +502,7 @@ public interface Odometry {
 ```
 
 ### Trajectories
-Trajectories are the basis for Pathfinder's movement. Well, technically
+Trajectories are the basis for Zenfinder's movement. Well, technically
 speaking, `Follower`s actually control your robot's movement, but instances
 of the `Trajectory` interface dictate how your robot moves.
 
@@ -511,13 +511,13 @@ can be customized to modify how the robot moves. There are a variety of types
 of trajectories, but they all do the same thing - tell your robot where to go.
 
 #### What's a `Follower`?
-You might see the term `Follower` mentioned in Pathfinder's documentation (or
+You might see the term `Follower` mentioned in Zenfinder's documentation (or
 source code) at some point. A `Follower` is an internal class used to actually
 follow trajectories. You may have also seen `GenericFollowerGenerator`, the
 de facto `FollowerGenerator`, responsible for creating `Follower` instances
 that follow `Trajectory` instances. Putting that in writing makes it sound
 way more complicated than it actually is, but just know that `Follower` is used
-exclusively internally by Pathfinder. You can create your own implementations
+exclusively internally by Zenfinder. You can create your own implementations
 of `Follower` and `FollowerGenerator` because this library is fairly modular,
 but there's not much of a reason to.
 
@@ -548,7 +548,7 @@ following parameters:
   greater than 0 and less than or equal to 1. A speed value of 1 will make
   the robot move as fast as it can, and a speed value of 0.1 will be... pretty
   slow.
-- Tolerance - the tolerance Pathfinder uses in determining if it's finished
+- Tolerance - the tolerance Zenfinder uses in determining if it's finished
   following the trajectory. This value should be determined experimentally.
   Higher tolerance values make your robot's movement less accurate, while
   lower tolerance values increase accuracy, but can sometimes cause issues
@@ -634,7 +634,7 @@ more work, I'd encourage you to put in the extra work.
 ##### What's a step value?
 You'll see the term `step` used quite often when dealing with splines. In
 order to properly explain what it is, you'll need a bit of background info
-on how Pathfinder processes splines.
+on how Zenfinder processes splines.
 
 A `Spline` is basically just an equation. You can input an X value and get
 a Y value as a result. This does two things - firstly, it means X values
@@ -642,7 +642,7 @@ can't go positive AND negative - they can only go positive OR negative.
 Secondly, it means that you'll always need to supply an X value in order
 to calculate a Y value.
 
-If you used the robot's current position as that X value, then Pathfinder's
+If you used the robot's current position as that X value, then Zenfinder's
 target position would be exactly the same as its current position, so it
 would not move at all. 
 
@@ -666,7 +666,7 @@ The most common issue you will encounter with splines is using an invalid
 step value. Well, that might not actually be the most common, but it sounds
 cooler if I put it like that. If you have a negative value when it should
 be positive (or a positive value when it should be negative), your robot will
-never move along the spline. Pathfinder won't throw any exceptions if this is
+never move along the spline. Zenfinder won't throw any exceptions if this is
 the case, so it can be challenging to debug. Make sure your step value is
 approaching the same infinity as the rest of your points.
 
@@ -779,7 +779,7 @@ Trajectory trajectory1 = new AdvancedSplineTrajectoryBuilder()
 ### Listeners
 Listeners allow you to "listen" for certain conditions, making it easy to
 write event-driven code. Listeners need to be ticked, which happens when
-Pathfinder's `tick()` method calls the `tick()` method of Pathfinder's
+Zenfinder's `tick()` method calls the `tick()` method of Zenfinder's
 `ListenerManager`, which in turn calls the `tick()` method of all of the
 associated listeners.
 
@@ -793,13 +793,13 @@ overcomplicate code.
 #### Ticking listeners
 Listeners must be ticked in order to function properly. It's strongly suggested
 that you make use of the `ListenerManager` class, as it makes managing
-listeners significantly easier. `Pathfinder` has a method called
+listeners significantly easier. `Zenfinder` has a method called
 `getListenerManager()` which returns the `ListenerManager` that that instance
-of Pathfinder is using.
+of Zenfinder is using.
 
 ##### If you used a listener manager
-If you register a listener by using the `pathfinder#getListenerManager()`'s
-`bind`, your listener will automataically be updated whenever Pathfinder's
+If you register a listener by using the `Zenfinder#getListenerManager()`'s
+`bind`, your listener will automataically be updated whenever Zenfinder's
 `tick()` method is called.
 
 ##### If you did not use a listener manager
@@ -808,7 +808,7 @@ tick your listeners on your own. I promise, it's not too hard - you just
 have to use the `tick` method, and you'll be all good!
 
 #### Using bindings
-The `listening` package of Pathfinder provides many utilities designed to
+The `listening` package of Zenfinder provides many utilities designed to
 simplify writing code for a robot. These utilities are customized to my
 preferences and using them may not be appropriate if a different solution
 is preferable.
@@ -818,27 +818,27 @@ First, it's important to understand HOW the listener manager works. It's
 not all that difficult, to be honest. This example is going to assume
 a robotics context:
 - Bind the listener (say we want to make dpad up do something)
-- Tick Pathfinder as normal
+- Tick Zenfinder as normal
 
 See? Not too bad. Each of the listeners in the listener manager is added
-to a collection. That collection is polled/ticked/updated every time Pathfinder
+to a collection. That collection is polled/ticked/updated every time Zenfinder
 is ticked.
 
-**IF YOU DON'T TICK PATHFINDER, LISTENERS WILL NOT WORK.**
+**IF YOU DON'T TICK Zenfinder, LISTENERS WILL NOT WORK.**
 
 ##### Binding buttons
 Buttons are a critical part of user input.
 ```java
 import me.wobblyyyy.Zenfinder.utils.SupplierFilter;
-import me.wobblyyyy.Zenfinder.Pathfinder;
+import me.wobblyyyy.Zenfinder.Zenfinder;
 import me.wobblyyyy.Zenfinder.listening.ListenerMode;
 
 public class BindingUserControls {
-    Pathfinder pathfinder = Pathfinder.newSimulatedPathfinder(0.01);
+    Zenfinder Zenfinder = Zenfinder.newSimulatedZenfinder(0.01);
 
     public void bindControlsAndRun() {
         // bind imaginary controls to an imaginary A button
-        pathfinder.getListenerManager()
+        Zenfinder.getListenerManager()
             .bind(
                 ListenerMode.CONDITION_NEWLY_MET,
                 aButton::isPressed,
@@ -858,13 +858,13 @@ public class BindingUserControls {
                 }
             );
 
-        // tick pathfinder forever and ever...
+        // tick Zenfinder forever and ever...
         //                     ... and ever...
         //                     ... and ever...
         //                     ... and ever...
         //                     ... and ever.
         while (true)
-            pathfinder.tick();
+            Zenfinder.tick();
     }
 }
 ```
@@ -874,14 +874,14 @@ This is only sightly easier than the previous approach, but who doesn't
 love writing clean code? Exactly.
 ```java
 import me.wobblyyyy.Zenfinder.utils.SupplierFilter;
-import me.wobblyyyy.Zenfinder.Pathfinder;
+import me.wobblyyyy.Zenfinder.Zenfinder;
 import me.wobblyyyy.Zenfinder.listening.ListenerMode;
 
 public class BindingUserControls {
-    Pathfinder pathfinder = Pathfinder.newSimulatedPathfinder(0.01);
+    Zenfinder Zenfinder = Zenfinder.newSimulatedZenfinder(0.01);
 
     public void bindControlsAndRun() {
-        pathfinder.getListenerManager()
+        Zenfinder.getListenerManager()
             .bind(
                 ListenerMode.CONDITION_NEWLY_MET,
                 aButton::isPressed,
@@ -894,15 +894,15 @@ public class BindingUserControls {
             );
 
         while (true)
-            pathfinder.tick();
+            Zenfinder.tick();
     }
 }
 ```
 
 ##### Binding arbitrary objects
-You can also bind arbitrary objects, allowing Pathfinder to handle just
+You can also bind arbitrary objects, allowing Zenfinder to handle just
 about any event-based functionality you want. The "bind" method of the
-`ListenerManager` class (accessible via `Pathfinder#getListenerManager()`)
+`ListenerManager` class (accessible via `Zenfinder#getListenerManager()`)
 is a generic method with type parameter T, representing the type of object
 that's being listened to. Conveniently enough, Java's lambda syntax makes
 it very easy to create these bindings.
@@ -928,7 +928,7 @@ public class Example {
 
     public void bindButton() {
         // print a message whenever a button is pressed
-        pathfinder.getListenerManager()
+        Zenfinder.getListenerManager()
             .bind(
                 ListenerMode.CONDITION_NEWLY_MET,
                 this::aButton,
@@ -976,11 +976,11 @@ that caused the condition to be true.
 Here's a complete code example.
 ```java
 import me.wobblyyyy.Zenfinder.utils.SupplierFilter;
-import me.wobblyyyy.Zenfinder.Pathfinder;
+import me.wobblyyyy.Zenfinder.Zenfinder;
 import me.wobblyyyy.Zenfinder.listening.ListenerMode;
 
 public class BindingUserControls {
-    Pathfinder pathfinder = Pathfinder.newSimulatedPathfinder(0.01);
+    Zenfinder Zenfinder = Zenfinder.newSimulatedZenfinder(0.01);
 
     // whenever x or y individually exceeds 500, print out
     // "x value has exceeded 500!" or "y value has exceeded 500!"
@@ -989,22 +989,22 @@ public class BindingUserControls {
     // if only x or only y exceeds 500, print out
     // "only x exceeds 500!" or "only y exceeds 500!"
     public void bindControlsAndRun() {
-        pathfinder.getListenerManager()
+        Zenfinder.getListenerManager()
             .bind(
                 ListenerMode.CONDITION_NEWLY_MET,
-                () -> pathfinder.getPosition(),      // Supplier<PointXYZ>
+                () -> Zenfinder.getPosition(),      // Supplier<PointXYZ>
                 (position) -> position.x() > 500,    // Predicate<PointXYZ>
                 (position) -> System.out.println("x value has exceeded 500!")
             )
             .bind(
                 ListenerMode.CONDITION_NEWLY_MET,
-                () -> pathfinder.getPosition(),      // Supplier<PointXYZ>
+                () -> Zenfinder.getPosition(),      // Supplier<PointXYZ>
                 (position) -> position.y() > 500,    // Predicate<PointXYZ>
                 (position) -> System.out.println("y value has exceeded 500!")
             )
             .bind(
                 ListenerMode.CONDITION_NEWLY_MET,
-                () -> pathfinder.getPosition(),
+                () -> Zenfinder.getPosition(),
                 (position) -> position.x() > 500 && position.y() > 500,
                 (position) -> System.out.println("x AND y values have exceeded 500!")
             )
@@ -1028,7 +1028,7 @@ public class BindingUserControls {
             );
 
         while (true)
-            pathfinder.tick();
+            Zenfinder.tick();
     }
 }
 ```
@@ -1038,12 +1038,12 @@ How else can you drive the robot? Exactly. You'll most likely need to bind
 joysticks to drive your robot during tele-op.
 ```java
 import me.wobblyyyy.Zenfinder.utils.SupplierFilter;
-import me.wobblyyyy.Zenfinder.Pathfinder;
+import me.wobblyyyy.Zenfinder.Zenfinder;
 import me.wobblyyyy.Zenfinder.listening.ListenerMode;
 import me.wobblyyyy.Zenfinder.geometry.Translation;
 
 public class BindingUserControls {
-    Pathfinder pathfinder = Pathfinder.newSimulatedPathfinder(0.01);
+    Zenfinder Zenfinder = Zenfinder.newSimulatedZenfinder(0.01);
 
     public void bindControlsAndRun() {
         // example joystick values for demonstration purposes
@@ -1051,13 +1051,13 @@ public class BindingUserControls {
         double sidewaysPower = 0.0;
         double turnPower = 0.0;
 
-        pathfinder
+        Zenfinder
             .bind(
                 ListenerMode.CONDITION_IS_MET,
                 () -> true,                    // true, so it's always executed
                 (isPressed) -> true,           // true, so it's always executed
                 (isPressed) -> {
-                    pathfinder.setTranslation(new Translation(
+                    Zenfinder.setTranslation(new Translation(
                         forwardsPower,
                         sidewaysPower,
                         turnPower
@@ -1066,7 +1066,7 @@ public class BindingUserControls {
             );
 
         while (true)
-            pathfinder.tick();
+            Zenfinder.tick();
     }
 }
 ```
@@ -1080,14 +1080,14 @@ slower. If neither trigger is pressed, the multiplier will be set to 0.5,
 making the robot move at its normal speed.
 ```java
 import me.wobblyyyy.Zenfinder.utils.SupplierFilter;
-import me.wobblyyyy.Zenfinder.Pathfinder;
+import me.wobblyyyy.Zenfinder.Zenfinder;
 import me.wobblyyyy.Zenfinder.listening.ListenerMode;
 import me.wobblyyyy.Zenfinder.geometry.Translation;
 
 import java.util.atomic.AtomicReference;
 
 public class BindingUserControls {
-    Pathfinder pathfinder = Pathfinder.newSimulatedPathfinder(0.01);
+    Zenfinder Zenfinder = Zenfinder.newSimulatedZenfinder(0.01);
 
     public void bindControlsAndRun() {
         // example joystick values for demonstration purposes
@@ -1105,7 +1105,7 @@ public class BindingUserControls {
         // values cannot be used from inside lambdas
         AtomicReference<Double> mult = new AtomicReference<>(0d);
 
-        pathfinder.getListenerManager()
+        Zenfinder.getListenerManager()
             .bind(
                 ListenerMode.CONDITION_NEWLY_MET,
                 () -> SupplierFilter.trueThenAllFalse( // make sure ONLY
@@ -1146,7 +1146,7 @@ public class BindingUserControls {
             );
 
         while (true)
-            pathfinder.tick();
+            Zenfinder.tick();
     }
 }
 ```
@@ -1161,7 +1161,7 @@ following class: `me.wobblyyyy.Zenfinder.utils.SupplierFilter`.
 #### Requiring multiple buttons to be pressed
 This binding will only be activated if the A and B buttons are pressed.
 ```java
-pathfinder.getListenerManager()
+Zenfinder.getListenerManager()
     .bind(
         ListenerMode.CONDITION_NEWLY_MET,
         () -> SupplierFilter.allTrue(
@@ -1179,7 +1179,7 @@ pathfinder.getListenerManager()
 This binding will only be activated if the A button is pressed, and the
 B, X, and Y buttons are not pressed.
 ```java
-pathfinder.getListenerManager()
+Zenfinder.getListenerManager()
     .bind(
         ListenerMode.CONDITION_NEWLY_MET,
         () -> SupplierFilter.trueThenAllFalse(
@@ -1199,7 +1199,7 @@ pathfinder.getListenerManager()
 This binding will be activated whenever either the A, B, X, or Y button
 is pressed.
 ```java
-pathfinder.getListenerManager()
+Zenfinder.getListenerManager()
     .bind(
         ListenerMode.CONDITION_NEWLY_MET,
         () -> SupplierFilter.anyTrue(
@@ -1224,7 +1224,7 @@ Supplier<Boolean> leftTrigger;
 // must be effectively final to use from within lambdas
 AtomicReference<Double> multiplier = new AtomicReference(0d);
 
-pathfinder.getListenerManager()
+Zenfinder.getListenerManager()
     .bind(
         ListenerMode.CONDITION_NEWLY_MET,
         () -> SupplierFilter.allFalse(
@@ -1261,7 +1261,7 @@ Supplier<Boolean> aButton;
 
 Shifter shifter = new Shifter(1, 1, 5, false, (pf) -> {});
 
-pathfinder.getListenerManager()
+Zenfinder.getListenerManager()
     .bind(
         ListenerMode.CONDITION_NEWLY_MET,
         () -> SupplierFilter.trueThenAllFalse(
@@ -1296,8 +1296,8 @@ it's worth including some abstraction.
 ### Lock the robot's heading
 
 ## Plugins
-A plugin is a piece of code that runs on top of Pathfinder and processes
-data in a way not normally possible with Pathfinder.
+A plugin is a piece of code that runs on top of Zenfinder and processes
+data in a way not normally possible with Zenfinder.
 ### Loading plugins
 #### Automatically loading plugins
 #### Disabling automatically loading plugins
@@ -1309,7 +1309,7 @@ data in a way not normally possible with Pathfinder.
 
 ## Path generation
 Path generation is quite literally what the name suggests: generating a path.
-Pathfinder uses an "A star" pathfinding algorithm.
+Zenfinder uses an "A star" pathfinding algorithm.
 
 ### A quick suggestion
 Don't use path generation if you don't have to. It's computationally expensive,
@@ -1345,3 +1345,4 @@ which, during loop-based operation, can cause some performance issues.
 #### Empty classes
 
 ## Sensors and non-movement related classes
+
